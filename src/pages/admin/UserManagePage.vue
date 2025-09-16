@@ -124,12 +124,13 @@ const pagination = computed(() => {
 })
 
 // 表格分页变化时的操作
-const doTableChange = (page: any) => {
+const doTableChange = (page: { current: number; pageSize: number }) => {
   searchParams.pageNum = page.current
   searchParams.pageSize = page.pageSize
   fetchData()
 }
 
+// 搜索数据
 const doSearch = () => {
   // 重置页码
   searchParams.pageNum = 1
@@ -137,11 +138,11 @@ const doSearch = () => {
 }
 
 // 删除数据
-const doDelete = async (id: number) => {
+const doDelete = async (id: string) => {
   if (!id) {
     return
   }
-  const res = await deleteUser({ id })
+  const res = await deleteUser({ id: id as unknown as number })
   if (res.data.code === 0) {
     message.success('删除成功')
     // 刷新数据
@@ -157,4 +158,10 @@ onMounted(() => {
 })
 </script>
 
-<style></style>
+<style scoped>
+#userManagePage {
+  padding: 24px;
+  background: white;
+  margin-top: 16px;
+}
+</style>

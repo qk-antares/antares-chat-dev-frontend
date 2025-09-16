@@ -50,15 +50,12 @@
 <script setup lang="ts">
 import { userLogout } from '@/api/userController'
 import { useLoginUserStore } from '@/stores/loginUser'
-import { LogoutOutlined } from '@ant-design/icons-vue'
-import type { MenuProps } from 'ant-design-vue'
-import { message } from 'ant-design-vue'
+import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { type MenuProps, message } from 'ant-design-vue'
 import { computed, h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-// 获取登录用户状态
 const loginUserStore = useLoginUserStore()
-
 const router = useRouter()
 // 当前选中菜单
 const selectedKeys = ref<string[]>(['/'])
@@ -71,8 +68,9 @@ router.afterEach((to, from, next) => {
 const originItems = [
   {
     key: '/',
-    label: '首页',
-    title: '首页',
+    icon: () => h(HomeOutlined),
+    label: '主页',
+    title: '主页',
   },
   {
     key: '/admin/userManage',
@@ -80,13 +78,9 @@ const originItems = [
     title: '用户管理',
   },
   {
-    key: 'others',
-    label: h(
-      'a',
-      { href: 'https://www.codefather.cn', target: '_blank' },
-      '编程导航',
-    ),
-    title: '编程导航',
+    key: '/admin/appManage',
+    label: '应用管理',
+    title: '应用管理',
   },
 ]
 
