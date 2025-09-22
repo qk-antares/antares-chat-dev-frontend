@@ -78,10 +78,6 @@ const createApp = async () => {
 
 // 加载我的应用
 const loadMyApps = async () => {
-  if (!loginUserStore.loginUser.id) {
-    return
-  }
-
   try {
     const res = await listMyAppVoByPage({
       pageNum: myAppsPage.current,
@@ -92,7 +88,7 @@ const loadMyApps = async () => {
 
     if (res.data.code === 0 && res.data.data) {
       myApps.value = res.data.data.records || []
-      myAppsPage.total = res.data.data.totalRow || 0
+      myAppsPage.total = Number(res.data.data.totalRow) || 0
     }
   } catch (error) {
     console.error('加载我的应用失败：', error)
@@ -109,11 +105,9 @@ const loadFeaturedApps = async () => {
       sortOrder: 'desc',
     })
 
-    console.log(res.data.data)
-
     if (res.data.code === 0 && res.data.data) {
       featuredApps.value = res.data.data.records || []
-      featuredAppsPage.total = res.data.data.totalRow || 0
+      featuredAppsPage.total = Number(res.data.data.totalRow) || 0
     }
   } catch (error) {
     console.error('加载精选应用失败：', error)

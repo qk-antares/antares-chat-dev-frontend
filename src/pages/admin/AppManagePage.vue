@@ -45,7 +45,7 @@
         <template v-if="column.dataIndex === 'cover'">
           <a-image
             v-if="record.cover"
-            :src="record.cover"
+            :src="getAppCoverUrl(record.cover)"
             :width="80"
             :height="60"
           />
@@ -108,6 +108,7 @@ import {
   updateAppByAdmin,
 } from '@/api/appController'
 import UserInfo from '@/components/UserInfo.vue'
+import { getAppCoverUrl } from '@/config/env'
 import { CODE_GEN_TYPE_OPTIONS, formatCodeGenType } from '@/utils/codeGenTypes'
 import { formatTime } from '@/utils/time'
 import { message } from 'ant-design-vue'
@@ -189,7 +190,7 @@ const fetchData = async () => {
     })
     if (res.data.data) {
       data.value = res.data.data.records ?? []
-      total.value = res.data.data.totalRow ?? 0
+      total.value = Number(res.data.data.totalRow) ?? 0
     } else {
       message.error('获取数据失败，' + res.data.message)
     }
