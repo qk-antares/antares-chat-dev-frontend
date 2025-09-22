@@ -1,14 +1,20 @@
 <template>
   <div class="app-card" :class="{ 'app-card--featured': featured }">
     <div class="app-preview">
-      <img v-if="app.cover" :src="app.cover" :alt="app.appName" />
+      <img
+        v-if="app.cover"
+        :src="getAppCoverUrl(app.cover)"
+        :alt="app.appName"
+      />
       <div v-else class="app-placeholder">
         <span>🤖</span>
       </div>
       <div class="app-overlay">
         <a-space>
           <a-button type="primary" @click="handleViewChat">查看对话</a-button>
-          <a-button v-if="app.deployKey" type="default" @click="handleViewWork">查看作品</a-button>
+          <a-button v-if="app.deployKey" type="default" @click="handleViewWork"
+            >查看作品</a-button
+          >
         </a-space>
       </div>
     </div>
@@ -29,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+import { getAppCoverUrl } from '@/config/env'
+
 interface Props {
   app: API.AppVO
   featured?: boolean

@@ -1,9 +1,10 @@
+import { API_BASE_URL } from '@/config/env'
 import { message } from 'ant-design-vue'
 import axios from 'axios'
 
 // 创建 Axios 实例
 const myAxios = axios.create({
-  baseURL: 'https://chatdev-api.fffu.fun/api',
+  baseURL: API_BASE_URL,
   timeout: 60000,
   withCredentials: true,
 })
