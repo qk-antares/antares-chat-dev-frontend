@@ -213,6 +213,8 @@
             :src="previewUrl"
             class="preview-iframe"
             frameborder="0"
+            loading="lazy"
+            fetchpriority="low"
             @load="onIframeLoad"
           ></iframe>
         </div>
@@ -835,7 +837,7 @@ onUnmounted(() => {
   flex-direction: column;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
@@ -843,7 +845,6 @@ onUnmounted(() => {
   flex: 0.9;
   padding: 16px;
   overflow-y: auto;
-  scroll-behavior: smooth;
 }
 
 .message-item {
@@ -928,7 +929,7 @@ onUnmounted(() => {
   flex-direction: column;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 

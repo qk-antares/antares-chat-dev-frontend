@@ -135,25 +135,9 @@ const viewWork = (app: API.AppVO) => {
 onMounted(() => {
   loadMyApps()
   loadFeaturedApps()
-
-  // 鼠标跟随光效
-  const handleMouseMove = (e: MouseEvent) => {
-    const { clientX, clientY } = e
-    const { innerWidth, innerHeight } = window
-    const x = (clientX / innerWidth) * 100
-    const y = (clientY / innerHeight) * 100
-
-    document.documentElement.style.setProperty('--mouse-x', `${x}%`)
-    document.documentElement.style.setProperty('--mouse-y', `${y}%`)
-  }
-
-  document.addEventListener('mousemove', handleMouseMove)
-
-  // 清理事件监听器
-  return () => {
-    document.removeEventListener('mousemove', handleMouseMove)
-  }
 })
+
+// 注：为提升性能，已移除鼠标跟随光效及其事件监听。
 </script>
 
 <template>
@@ -281,323 +265,131 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* 优化版：移除大面积动态渐变、背板模糊和高开销阴影，降低重绘/合成成本 */
 #homePage {
   width: 100%;
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 8%, #e2e8f0 20%, #cbd5e1 100%),
-    radial-gradient(
-      circle at 20% 80%,
-      rgba(59, 130, 246, 0.15) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 20%,
-      rgba(139, 92, 246, 0.12) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 40%,
-      rgba(16, 185, 129, 0.08) 0%,
-      transparent 50%
-    );
-  position: relative;
-  overflow: hidden;
-}
-
-/* 科技感网格背景 */
-#homePage::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-    linear-gradient(rgba(139, 92, 246, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px);
-  background-size:
-    100px 100px,
-    100px 100px,
-    20px 20px,
-    20px 20px;
-  pointer-events: none;
-  animation: gridFloat 20s ease-in-out infinite;
-}
-
-/* 动态光效 */
-#homePage::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(
-      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-      rgba(59, 130, 246, 0.08) 0%,
-      rgba(139, 92, 246, 0.06) 40%,
-      transparent 80%
-    ),
-    linear-gradient(
-      45deg,
-      transparent 30%,
-      rgba(59, 130, 246, 0.04) 50%,
-      transparent 70%
-    ),
-    linear-gradient(
-      -45deg,
-      transparent 30%,
-      rgba(139, 92, 246, 0.04) 50%,
-      transparent 70%
-    );
-  pointer-events: none;
-  animation: lightPulse 8s ease-in-out infinite alternate;
-}
-
-@keyframes gridFloat {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(5px, 5px);
-  }
-}
-
-@keyframes lightPulse {
-  0% {
-    opacity: 0.3;
-  }
-  100% {
-    opacity: 0.7;
-  }
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  position: relative;
-  z-index: 2;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* 移除居中光束效果 */
-
-/* 英雄区域 */
+/* 英雄区域：去除 ::before 动态装饰与动画 */
 .hero-section {
   text-align: center;
-  padding: 80px 0 60px;
-  margin-bottom: 28px;
+  padding: 72px 0 52px;
+  margin-bottom: 24px;
   color: #1e293b;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(
-      ellipse 800px 400px at center,
-      rgba(59, 130, 246, 0.12) 0%,
-      transparent 70%
-    ),
-    linear-gradient(
-      45deg,
-      transparent 30%,
-      rgba(139, 92, 246, 0.05) 50%,
-      transparent 70%
-    ),
-    linear-gradient(
-      -45deg,
-      transparent 30%,
-      rgba(16, 185, 129, 0.04) 50%,
-      transparent 70%
-    );
-  animation: heroGlow 10s ease-in-out infinite alternate;
-}
-
-@keyframes heroGlow {
-  0% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-}
-
-@keyframes rotate {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
 }
 
 .hero-title {
-  font-size: 56px;
+  font-size: 48px;
   font-weight: 700;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   line-height: 1.2;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #10b981 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: -1px;
-  position: relative;
-  z-index: 2;
-  animation: titleShimmer 3s ease-in-out infinite;
-}
-
-@keyframes titleShimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+  letter-spacing: -0.5px;
 }
 
 .hero-description {
-  font-size: 20px;
+  font-size: 18px;
   margin: 0;
-  opacity: 0.8;
   color: #64748b;
-  position: relative;
-  z-index: 2;
 }
 
-/* 输入区域 */
+/* 输入区域：移除 backdrop-filter 与高强度阴影 */
 .input-section {
   position: relative;
-  margin: 0 auto 24px;
+  margin: 0 auto 20px;
   max-width: 800px;
 }
 
 .prompt-input {
-  border-radius: 16px;
-  border: none;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   font-size: 16px;
-  padding: 20px 60px 20px 20px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 16px 56px 16px 16px;
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
 .prompt-input:focus {
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
 .input-actions {
   position: absolute;
-  bottom: 12px;
-  right: 12px;
+  bottom: 10px;
+  right: 10px;
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
-/* 快捷按钮 */
+/* 快捷按钮：去除流光动画与背板模糊 */
 .quick-actions {
   display: flex;
   gap: 12px;
   justify-content: center;
-  margin-bottom: 60px;
+  margin-bottom: 48px;
   flex-wrap: wrap;
 }
 
 .quick-actions .ant-btn {
-  border-radius: 25px;
-  padding: 8px 20px;
+  border-radius: 24px;
+  padding: 8px 18px;
   height: auto;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: #ffffff;
+  border: 1px solid rgba(59, 130, 246, 0.18);
   color: #475569;
-  backdrop-filter: blur(15px);
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.quick-actions .ant-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(59, 130, 246, 0.1),
-    transparent
-  );
-  transition: left 0.5s;
-}
-
-.quick-actions .ant-btn:hover::before {
-  left: 100%;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .quick-actions .ant-btn:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(59, 130, 246, 0.4);
+  border-color: rgba(59, 130, 246, 0.35);
   color: #3b82f6;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.16);
 }
 
 /* 区域标题 */
 .section {
-  margin-bottom: 60px;
+  margin-bottom: 52px;
 }
 
 .section-title {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   color: #1e293b;
 }
 
-/* 我的作品网格 */
-.app-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
-}
-
-/* 精选案例网格 */
+/* 网格布局 */
+.app-grid,
 .featured-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
+  gap: 20px;
+  margin-bottom: 24px;
 }
 
 /* 分页 */
 .pagination-wrapper {
   display: flex;
   justify-content: center;
-  margin-top: 32px;
+  margin-top: 24px;
 }
 
 /* 响应式设计 */
@@ -617,6 +409,14 @@ onMounted(() => {
 
   .quick-actions {
     justify-content: center;
+  }
+}
+
+/* 尊重用户的系统动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
   }
 }
 </style>

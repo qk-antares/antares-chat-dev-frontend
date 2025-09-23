@@ -21,12 +21,13 @@
 
 <style scoped>
 .footer {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
+  background: #ffffff;
   text-align: center;
   padding: 20px;
   margin-top: 40px;
-  border-top: 1px solid rgba(102, 126, 234, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  /* 轻量阴影，避免大半径模糊 */
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .copyright {

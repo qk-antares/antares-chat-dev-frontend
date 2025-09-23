@@ -48,6 +48,8 @@
             :src="getAppCoverUrl(record.cover)"
             :width="80"
             :height="60"
+            :preview="false"
+            :placeholder="false"
           />
           <div v-else class="no-cover">无封面</div>
         </template>

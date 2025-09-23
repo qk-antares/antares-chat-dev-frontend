@@ -5,6 +5,8 @@
         v-if="app.cover"
         :src="getAppCoverUrl(app.cover)"
         :alt="app.appName"
+        loading="lazy"
+        decoding="async"
       />
       <div v-else class="app-placeholder">
         <span>🤖</span>
@@ -63,27 +65,29 @@ const handleViewWork = () => {
 </script>
 
 <style scoped>
+/* 优化版卡片样式：移除背板模糊与重阴影，降低 hover 位移 */
 .app-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
+  background: #ffffff;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #eef0f3;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   transition:
-    transform 0.3s,
-    box-shadow 0.3s;
-  cursor: pointer;
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+  /* 降低首次渲染成本：对屏外卡片延迟样式/布局计算 */
+  content-visibility: auto;
+  contain-intrinsic-size: 260px 320px;
 }
 
 .app-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 .app-preview {
   height: 180px;
-  background: #f5f5f5;
+  background: #f6f8fa;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,22 +102,19 @@ const handleViewWork = () => {
 }
 
 .app-placeholder {
-  font-size: 48px;
-  color: #d9d9d9;
+  font-size: 42px;
+  color: #cbd5e1;
 }
 
+/* 将 overlay 常驻显示但半透明，避免频繁透明度动画 */
 .app-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s;
 }
 
 .app-card:hover .app-overlay {
@@ -121,7 +122,7 @@ const handleViewWork = () => {
 }
 
 .app-info {
-  padding: 16px;
+  padding: 14px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -140,18 +141,25 @@ const handleViewWork = () => {
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 4px;
-  color: #1a1a1a;
+  color: #111827;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .app-author {
-  font-size: 14px;
-  color: #666;
+  font-size: 13px;
+  color: #6b7280;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 辅助：减少动效对弱设备的影响 */
+@media (prefers-reduced-motion: reduce) {
+  .app-card {
+    transition: none !important;
+  }
 }
 </style>

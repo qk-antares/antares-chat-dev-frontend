@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
+import MarkdownIt from 'markdown-it'
+import { computed } from 'vue'
 
 // 引入代码高亮样式
 import 'highlight.js/styles/github.css'
@@ -34,7 +34,9 @@ const md: MarkdownIt = new MarkdownIt({
       }
     }
 
-    return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>'
+    return (
+      '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>'
+    )
   },
 })
 
