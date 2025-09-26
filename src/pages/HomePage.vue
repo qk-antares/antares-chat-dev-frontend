@@ -7,6 +7,7 @@ import {
 import AppCard from '@/components/AppCard.vue'
 import { getDeployUrl } from '@/config/env'
 import { useLoginUserStore } from '@/stores/loginUser'
+import { SendOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -166,7 +167,7 @@ onMounted(() => {
             :loading="creating"
           >
             <template #icon>
-              <span>↑</span>
+              <SendOutlined />
             </template>
           </a-button>
         </div>
@@ -294,8 +295,6 @@ onMounted(() => {
   font-weight: 700;
   margin: 0 0 16px;
   line-height: 1.2;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: -0.5px;
 }
@@ -366,7 +365,11 @@ onMounted(() => {
 
 /* 区域标题 */
 .section {
-  margin-bottom: 52px;
+  margin-bottom: 40px;
+  background-color: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 32px 28px;
 }
 
 .section-title {
@@ -381,7 +384,8 @@ onMounted(() => {
 .featured-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
+  row-gap: 1.5rem;
+  column-gap: 1rem;
   margin-bottom: 24px;
 }
 

@@ -2,11 +2,15 @@
   <a-layout-header class="header">
     <a-row :wrap="false">
       <!-- 左侧：Logo和标题 -->
-      <a-col flex="200px">
+      <a-col flex="160px">
         <RouterLink to="/">
           <div class="header-left">
             <img class="logo" src="@/assets/logo.png" alt="Logo" />
-            <h1 class="site-title">鱼皮应用生成</h1>
+            <img
+              :style="{ height: '18px' }"
+              src="@/assets/title.svg"
+              alt="Logo"
+            />
           </div>
         </RouterLink>
       </a-col>
@@ -24,9 +28,11 @@
         <div class="user-login-status">
           <div v-if="loginUserStore.loginUser.id">
             <a-dropdown>
-              <a-space>
-                <a-avatar :src="loginUserStore.loginUser.userAvatar" />
-                {{ loginUserStore.loginUser.userName ?? '无名' }}
+              <a-space :style="{ cursor: 'pointer' }">
+                <a-avatar
+                  :src="loginUserStore.loginUser.userAvatar || DEFAULT_AVATAR"
+                />
+                {{ loginUserStore.loginUser.userAccount ?? '无名' }}
               </a-space>
               <template #overlay>
                 <a-menu>
@@ -49,10 +55,11 @@
 
 <script setup lang="ts">
 import { userLogout } from '@/api/userController'
+import { DEFAULT_AVATAR } from '@/config/env'
 import { useLoginUserStore } from '@/stores/loginUser'
-import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { LogoutOutlined } from '@ant-design/icons-vue'
 import { type MenuProps, message } from 'ant-design-vue'
-import { computed, h, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const loginUserStore = useLoginUserStore()
@@ -68,7 +75,6 @@ router.afterEach((to, from, next) => {
 const originItems = [
   {
     key: '/',
-    icon: () => h(HomeOutlined),
     label: '主页',
     title: '主页',
   },
@@ -130,17 +136,19 @@ const doLogout = async () => {
 .header {
   background: #fff;
   padding: 0 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 12px;
+  height: 100%;
 }
 
 .logo {
-  height: 48px;
-  width: 48px;
+  height: 32px;
+  width: 32px;
 }
 
 .site-title {

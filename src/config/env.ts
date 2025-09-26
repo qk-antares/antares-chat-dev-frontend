@@ -39,3 +39,6 @@ export const getStaticPreviewUrl = (codeGenType: string, appId: string) => {
   }
   return baseUrl
 }
+
+export const DEFAULT_AVATAR =
+  'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'

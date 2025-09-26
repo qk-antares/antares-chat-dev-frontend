@@ -2,13 +2,16 @@
   <a-layout-footer class="footer">
     <div class="footer-content">
       <p class="copyright">
+        ©2025 ChatDev 版权所有
+
         <a
           href="https://github.com/qk-antares"
           target="_blank"
           rel="noopener noreferrer"
           class="author-link"
+          style="margin-left: 16px; color: #666; font-size: 14px"
         >
-          @2024 Antares Chat Dev. All Rights Reserved.
+          <GithubOutlined /> GitHub 地址
         </a>
       </p>
     </div>
@@ -16,22 +19,17 @@
 </template>
 
 <script setup lang="ts">
-// 无需额外的响应式数据
+import { GithubOutlined } from '@ant-design/icons-vue'
 </script>
 
 <style scoped>
 .footer {
-  background: #ffffff;
   text-align: center;
-  padding: 20px;
-  margin-top: 40px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  /* 轻量阴影，避免大半径模糊 */
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+  background: transparent;
+  margin-bottom: 16px;
 }
 
 .copyright {
-  margin: 0;
   color: #666;
   font-size: 14px;
 }

@@ -152,7 +152,9 @@ export class VisualEditor {
       try {
         if (this.iframe!.contentWindow && this.iframe!.contentDocument) {
           // 检查是否已经注入过脚本
-          if (this.iframe!.contentDocument.getElementById('visual-edit-script')) {
+          if (
+            this.iframe!.contentDocument.getElementById('visual-edit-script')
+          ) {
             this.sendMessageToIframe({
               type: 'TOGGLE_EDIT_MODE',
               editMode: true,
@@ -161,7 +163,8 @@ export class VisualEditor {
           }
 
           const script = this.generateEditScript()
-          const scriptElement = this.iframe!.contentDocument.createElement('script')
+          const scriptElement =
+            this.iframe!.contentDocument.createElement('script')
           scriptElement.id = 'visual-edit-script'
           scriptElement.textContent = script
           this.iframe!.contentDocument.head.appendChild(scriptElement)
@@ -192,39 +195,33 @@ export class VisualEditor {
           style.id = 'edit-mode-styles';
           style.textContent = \`
             .edit-hover {
-              outline: 2px dashed #1890ff !important;
-              outline-offset: 2px !important;
               cursor: crosshair !important;
-              transition: outline 0.2s ease !important;
               position: relative !important;
             }
-            .edit-hover::before {
+            .edit-hover::after {
               content: '' !important;
               position: absolute !important;
-              top: -4px !important;
-              left: -4px !important;
-              right: -4px !important;
-              bottom: -4px !important;
-              background: rgba(24, 144, 255, 0.02) !important;
+              inset: 0 !important;
+              border: 2px dashed #1890ff !important; /* 蓝色虚线 */
+              border-radius: inherit !important;
               pointer-events: none !important;
-              z-index: -1 !important;
+              z-index: 9999 !important;
+              box-sizing: border-box !important;
+              background: rgba(24, 144, 255, 0.02) !important;
             }
             .edit-selected {
-              outline: 3px solid #52c41a !important;
-              outline-offset: 2px !important;
-              cursor: default !important;
               position: relative !important;
             }
-            .edit-selected::before {
+            .edit-selected::after {
               content: '' !important;
               position: absolute !important;
-              top: -4px !important;
-              left: -4px !important;
-              right: -4px !important;
-              bottom: -4px !important;
-              background: rgba(82, 196, 26, 0.03) !important;
+              inset: 0 !important;
+              border: 2px solid #52c41a !important; /* 绿色实线 */
+              border-radius: inherit !important;
               pointer-events: none !important;
-              z-index: -1 !important;
+              z-index: 9999 !important;
+              box-sizing: border-box !important;
+              background: rgba(82, 196, 26, 0.03) !important;
             }
           \`;
           document.head.appendChild(style);

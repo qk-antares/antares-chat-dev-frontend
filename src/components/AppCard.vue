@@ -1,35 +1,42 @@
 <template>
-  <div class="app-card" :class="{ 'app-card--featured': featured }">
-    <div class="app-preview">
-      <img
-        v-if="app.cover"
-        :src="getAppCoverUrl(app.cover)"
-        :alt="app.appName"
-        loading="lazy"
-        decoding="async"
-      />
-      <div v-else class="app-placeholder">
-        <span>🤖</span>
-      </div>
-      <div class="app-overlay">
-        <a-space>
-          <a-button type="primary" @click="handleViewChat">查看对话</a-button>
-          <a-button v-if="app.deployKey" type="default" @click="handleViewWork"
-            >查看作品</a-button
-          >
-        </a-space>
+  <div>
+    <div class="app-card" :class="{ 'app-card--featured': featured }">
+      <div class="app-preview">
+        <img
+          v-if="app.cover"
+          :src="getAppCoverUrl(app.cover)"
+          :alt="app.appName"
+          loading="lazy"
+          decoding="async"
+        />
+        <img
+          v-else
+          src="@/assets/default_cover.svg"
+          alt="默认封面"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="app-overlay">
+          <a-space>
+            <a-button type="primary" @click="handleViewChat">查看对话</a-button>
+            <a-button
+              v-if="app.deployKey"
+              type="default"
+              @click="handleViewWork"
+              >查看作品</a-button
+            >
+          </a-space>
+        </div>
       </div>
     </div>
     <div class="app-info">
       <div class="app-info-left">
-        <a-avatar :src="app.user?.userAvatar" :size="40">
-          {{ app.user?.userName?.charAt(0) || 'U' }}
-        </a-avatar>
+        <a-avatar :src="app.user?.userAvatar || DEFAULT_AVATAR" :size="40" />
       </div>
       <div class="app-info-right">
         <h3 class="app-title">{{ app.appName || '未命名应用' }}</h3>
         <p class="app-author">
-          {{ app.user?.userName || (featured ? '官方' : '未知用户') }}
+          {{ app.user?.userAccount || (featured ? '官方' : '未知用户') }}
         </p>
       </div>
     </div>
@@ -37,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { getAppCoverUrl } from '@/config/env'
+import { DEFAULT_AVATAR, getAppCoverUrl } from '@/config/env'
 
 interface Props {
   app: API.AppVO
@@ -65,34 +72,26 @@ const handleViewWork = () => {
 </script>
 
 <style scoped>
-/* 优化版卡片样式：移除背板模糊与重阴影，降低 hover 位移 */
 .app-card {
   background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #eef0f3;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  transition:
-    transform 0.16s ease,
-    box-shadow 0.16s ease;
-  /* 降低首次渲染成本：对屏外卡片延迟样式/布局计算 */
+  border: 1px solid #e5e7eb;
+  transition: transform 0.16s ease;
   content-visibility: auto;
-  contain-intrinsic-size: 260px 320px;
-}
-
-.app-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  contain-intrinsic-size: 260px 180px;
 }
 
 .app-preview {
-  height: 180px;
+  aspect-ratio: 16 / 9;
+  width: 100%;
   background: #f6f8fa;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
+  border-radius: 12px;
 }
 
 .app-preview img {
@@ -106,7 +105,6 @@ const handleViewWork = () => {
   color: #cbd5e1;
 }
 
-/* 将 overlay 常驻显示但半透明，避免频繁透明度动画 */
 .app-overlay {
   position: absolute;
   inset: 0;
@@ -122,10 +120,12 @@ const handleViewWork = () => {
 }
 
 .app-info {
-  padding: 14px;
+  padding: 12px 0 0 0;
   display: flex;
   align-items: center;
   gap: 12px;
+  background: none;
+  border-radius: 0;
 }
 
 .app-info-left {
@@ -156,7 +156,6 @@ const handleViewWork = () => {
   text-overflow: ellipsis;
 }
 
-/* 辅助：减少动效对弱设备的影响 */
 @media (prefers-reduced-motion: reduce) {
   .app-card {
     transition: none !important;

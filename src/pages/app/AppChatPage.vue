@@ -1,18 +1,23 @@
 <template>
   <div id="appChatPage">
-    <!-- 顶部栏 -->
-    <div class="header-bar">
-      <div class="header-left">
-        <h1 class="app-name">{{ appInfo?.appName || '网站生成器' }}</h1>
-        <a-tag
-          v-if="appInfo?.codeGenType"
-          color="blue"
-          class="code-gen-type-tag"
-        >
-          {{ formatCodeGenType(appInfo.codeGenType) }}
-        </a-tag>
+    <!-- 顶部栏（参考全局 Header 设计） -->
+    <div class="chat-header">
+      <!-- 左侧：Logo + 分隔线 + 应用名称 -->
+      <div class="chat-header-left">
+        <RouterLink to="/" class="home-link">
+          <div class="logo-wrapper">
+            <img class="logo" src="@/assets/logo.png" alt="Logo" />
+          </div>
+        </RouterLink>
+        <div class="divider" />
+        <h1 class="app-name" :title="appInfo?.appName || '网站生成器'">
+          {{ appInfo?.appName || '网站生成器' }}
+        </h1>
+        <div class="divider" />
       </div>
-      <div class="header-right">
+
+      <!-- 中间：操作按钮 -->
+      <div class="chat-header-center">
         <a-button type="default" @click="showAppDetail">
           <template #icon>
             <InfoCircleOutlined />
@@ -37,6 +42,32 @@
           </template>
           部署
         </a-button>
+      </div>
+
+      <!-- 右侧：用户头像下拉 -->
+      <div class="chat-header-right">
+        <div v-if="loginUserStore.loginUser.id">
+          <a-dropdown>
+            <a-space>
+              <a-avatar
+                :src="loginUserStore.loginUser.userAvatar || DEFAULT_AVATAR"
+              />
+              <span class="user-name">{{
+                loginUserStore.loginUser.userAccount ?? '无名'
+              }}</span>
+            </a-space>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item @click="doLogout">
+                  <LogoutOutlined /> 退出登录
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
+        </div>
+        <div v-else>
+          <a-button type="primary" href="/user/login">登录</a-button>
+        </div>
       </div>
     </div>
 
@@ -65,7 +96,9 @@
             <div v-if="message.type === 'user'" class="user-message">
               <div class="message-content">{{ message.content }}</div>
               <div class="message-avatar">
-                <a-avatar :src="loginUserStore.loginUser.userAvatar" />
+                <a-avatar
+                  :src="loginUserStore.loginUser.userAvatar || DEFAULT_AVATAR"
+                />
               </div>
             </div>
             <div v-else class="ai-message">
@@ -173,10 +206,11 @@
           </div>
         </div>
       </div>
+
       <!-- 右侧网页展示区域 -->
       <div class="preview-section">
         <div class="preview-header">
-          <h3>生成后的网页展示</h3>
+          <h1 class="app-name">生成后的网页展示</h1>
           <div class="preview-actions">
             <a-button
               v-if="isOwner && previewUrl"
@@ -248,24 +282,26 @@ import {
 import { listAppChatHistory } from '@/api/chatHistoryController'
 import request from '@/request'
 import { useLoginUserStore } from '@/stores/loginUser'
-import { CodeGenTypeEnum, formatCodeGenType } from '@/utils/codeGenTypes'
+import { CodeGenTypeEnum } from '@/utils/codeGenTypes'
 import { message } from 'ant-design-vue'
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import aiAvatar from '@/assets/aiAvatar.png'
+import aiAvatar from '@/assets/aiAvatar.svg'
 import AppDetailModal from '@/components/AppDetailModal.vue'
 import DeploySuccessModal from '@/components/DeploySuccessModal.vue'
 import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
-import { API_BASE_URL, getStaticPreviewUrl } from '@/config/env'
+import { API_BASE_URL, DEFAULT_AVATAR, getStaticPreviewUrl } from '@/config/env'
 import { VisualEditor, type ElementInfo } from '@/utils/visualEditor'
 
+import { userLogout } from '@/api/userController'
 import {
   CloudUploadOutlined,
   DownloadOutlined,
   EditOutlined,
   ExportOutlined,
   InfoCircleOutlined,
+  LogoutOutlined,
   SendOutlined,
 } from '@ant-design/icons-vue'
 
@@ -766,6 +802,20 @@ const getInputPlaceholder = () => {
   return '请描述你想生成的网站，越详细效果越好哦'
 }
 
+// 退出登录
+const doLogout = async () => {
+  const res = await userLogout()
+  if (res.data.code === 0) {
+    loginUserStore.setLoginUser({
+      userName: '未登录',
+    })
+    message.success('退出登录成功')
+    await router.push('/user/login')
+  } else {
+    message.error('退出登录失败，' + res.data.message)
+  }
+}
+
 // 页面加载时获取应用信息
 onMounted(() => {
   fetchAppInfo()
@@ -787,46 +837,74 @@ onUnmounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  background: #fdfdfd;
+  background-color: #f3f4f6;
 }
 
 /* 顶部栏 */
-.header-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-}
-
-.header-left {
+/* Header 样式对齐 GlobalHeader（高度 64px，左右 24px 内边距）*/
+.chat-header {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  height: 64px;
+  padding: 0 24px;
+  gap: 24px;
 }
 
-.code-gen-type-tag {
-  font-size: 12px;
+.chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .app-name {
   margin: 0;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px;
   color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 360px;
 }
 
-.header-right {
+/* 中间操作区绝对居中，确保始终在整个 Header 水平正中 */
+.chat-header-center {
   display: flex;
   gap: 12px;
+}
+
+.chat-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto; /* 将右侧区域推到最右 */
+}
+
+.user-name {
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 主要内容区域 */
 .main-content {
   flex: 1;
   display: flex;
-  gap: 16px;
-  padding: 8px;
+  gap: 10px;
+  padding: 0 8px 8px;
   overflow: hidden;
 }
 
@@ -837,14 +915,17 @@ onUnmounted(() => {
   flex-direction: column;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  /* 浅灰色细边框 */
+  box-shadow: none;
   overflow: hidden;
 }
 
 .messages-container {
-  flex: 0.9;
+  flex: 1; /* 占据除 Alert 和 输入框外的所有剩余空间 */
   padding: 16px;
   overflow-y: auto;
+  min-height: 0; /* 防止与 flex 子元素高度计算冲突，允许正确收缩 */
 }
 
 .message-item {
@@ -866,11 +947,12 @@ onUnmounted(() => {
 }
 
 .message-content {
-  max-width: 70%;
+  max-width: 75%;
   padding: 12px 16px;
   border-radius: 12px;
   line-height: 1.5;
   word-wrap: break-word;
+  font-size: 14px;
 }
 
 .user-message .message-content {
@@ -906,14 +988,24 @@ onUnmounted(() => {
 .input-container {
   padding: 16px;
   background: white;
+  border-top: 1px solid #f0f0f0;
+  flex: 0 0 120px; /* 固定高度，保证输入框区域不会被拉伸或占满 */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 .input-wrapper {
   position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .input-wrapper .ant-input {
   padding-right: 50px;
+  height: 100%; /* 填满固定容器高度 */
+  resize: none; /* 禁止用户拖拽调整高度 */
 }
 
 .input-actions {
@@ -929,7 +1021,9 @@ onUnmounted(() => {
   flex-direction: column;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  /* 浅灰色细边框 */
+  box-shadow: none;
   overflow: hidden;
 }
 
@@ -937,7 +1031,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 8px 16px;
   border-bottom: 1px solid #e8e8e8;
 }
 
@@ -1024,6 +1118,12 @@ onUnmounted(() => {
 
   .message-content {
     max-width: 85%;
+  }
+
+  /* 小屏幕下减少输入区域高度 */
+  .input-container {
+    flex: 0 0 130px;
+    padding: 12px;
   }
 
   /* 选中元素信息样式 */
