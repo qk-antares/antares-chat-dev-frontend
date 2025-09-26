@@ -1,13 +1,26 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import BasicLayout from '@/layouts/BasicLayout.vue'
+import BlankLayout from '@/layouts/BlankLayout.vue'
 import { useLoginUserStore } from './stores/loginUser'
 
 const loginUserStore = useLoginUserStore()
 loginUserStore.fetchLoginUser()
+
+const route = useRoute()
+
+// 根据路由元信息选择布局
+const CurrentLayout = computed(() => {
+  if (route.meta.layout === 'blank') {
+    return BlankLayout
+  }
+  return BasicLayout
+})
 </script>
 
 <template>
-  <BasicLayout />
+  <component :is="CurrentLayout" />
 </template>
 
 <style>

@@ -20,11 +20,13 @@ const router = createRouter({
       path: '/user/login',
       name: '用户登录',
       component: UserLoginPage,
+      meta: { layout: 'blank' },
     },
     {
       path: '/user/register',
       name: '用户注册',
       component: UserRegisterPage,
+      meta: { layout: 'blank' },
     },
     {
       path: '/admin/userManage',
