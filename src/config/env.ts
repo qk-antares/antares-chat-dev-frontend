@@ -4,18 +4,20 @@
 
 import { CodeGenTypeEnum } from '@/utils/codeGenTypes'
 
+const DEPLOY_HOST = 'chatdev.fffu.fun:44480'
+
 // 应用封面图地址
 export const APP_COVER_BASE_URL =
   import.meta.env.VITE_APP_COVER_BASE_URL ||
-  'https://chatdev.fffu.fun/screenshots'
+  `https://${DEPLOY_HOST}/screenshots`
 
 // 应用部署域名
 export const DEPLOY_DOMAIN =
-  import.meta.env.VITE_DEPLOY_DOMAIN || 'https://chatdev.fffu.fun/demo'
+  import.meta.env.VITE_DEPLOY_DOMAIN || `https://${DEPLOY_HOST}/demo`
 
 // API 基础地址
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'https://chatdev.fffu.fun/api'
+  import.meta.env.VITE_API_BASE_URL || `https://${DEPLOY_HOST}/api`
 
 // 静态资源地址
 export const STATIC_BASE_URL = `${API_BASE_URL}/static`
@@ -27,7 +29,7 @@ export const getAppCoverUrl = (cover: string) => {
 
 // 获取部署应用的完整URL
 export const getDeployUrl = (deployKey: string) => {
-  return `${DEPLOY_DOMAIN}/${deployKey}`
+  return `${DEPLOY_DOMAIN}/${deployKey}/`
 }
 
 // TODO: 获取静态资源预览URL

@@ -36,7 +36,12 @@
           </template>
           下载代码
         </a-button>
-        <a-button type="primary" @click="deployApp" :loading="deploying">
+        <a-button
+          type="primary"
+          :disabled="!isOwner"
+          @click="deployApp"
+          :loading="deploying"
+        >
           <template #icon>
             <CloudUploadOutlined />
           </template>
@@ -178,7 +183,7 @@
                 :placeholder="getInputPlaceholder()"
                 :rows="4"
                 :maxlength="1000"
-                @keydown.enter.prevent="sendMessage"
+                @keydown="handleInputKeydown"
                 :disabled="isGenerating || !isOwner"
               />
             </a-tooltip>
@@ -188,7 +193,7 @@
               :placeholder="getInputPlaceholder()"
               :rows="4"
               :maxlength="1000"
-              @keydown.enter.prevent="sendMessage"
+              @keydown="handleInputKeydown"
               :disabled="isGenerating"
             />
             <div class="input-actions">
@@ -542,6 +547,19 @@ const sendMessage = async () => {
   // 开始生成
   isGenerating.value = true
   await generateCode(message, aiMessageIndex)
+}
+
+// 处理输入框键盘事件：Shift+Enter 换行；Enter 发送
+const handleInputKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter') {
+    if (e.shiftKey) {
+      // 允许换行
+      return
+    }
+    // 阻止默认换行，发送消息
+    e.preventDefault()
+    sendMessage()
+  }
 }
 
 // 生成代码 - 使用 EventSource 处理流式响应
